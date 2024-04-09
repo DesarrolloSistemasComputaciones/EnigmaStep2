@@ -19,8 +19,8 @@ public class GetEnigmaRequest   {
   @JsonProperty("header")
   private Header header = null;
 
-  @JsonProperty("enigma")
-  private String enigma = null;
+  @JsonProperty("step")
+  private String step = null;
 
   public GetEnigmaRequest header(Header header) {
     this.header = header;
@@ -43,26 +43,24 @@ public class GetEnigmaRequest   {
     this.header = header;
   }
 
-  public GetEnigmaRequest enigma(String enigma) {
-    this.enigma = enigma;
+  public GetEnigmaRequest step(String step) {
+    this.step = step;
     return this;
   }
 
   /**
-   * Get enigma
-   * @return enigma
+   * Get step
+   * @return step
   **/
   @ApiModelProperty(required = true, value = "")
   @NotNull
-
-  public String getEnigma() {
-    return enigma;
+  public String getStep() {
+    return step;
   }
 
-  public void setEnigma(String enigma) {
-    this.enigma = enigma;
+  public void setStep(String step) {
+    this.step = step;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -74,12 +72,12 @@ public class GetEnigmaRequest   {
     }
     GetEnigmaRequest getEnigmaRequest = (GetEnigmaRequest) o;
     return Objects.equals(this.header, getEnigmaRequest.header) &&
-        Objects.equals(this.enigma, getEnigmaRequest.enigma);
+        Objects.equals(this.step, getEnigmaRequest.step);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(header, enigma);
+    return Objects.hash(header, step);
   }
 
   @Override
@@ -88,7 +86,7 @@ public class GetEnigmaRequest   {
     sb.append("class GetEnigmaRequest {\n");
     
     sb.append("    header: ").append(toIndentedString(header)).append("\n");
-    sb.append("    enigma: ").append(toIndentedString(enigma)).append("\n");
+    sb.append("    step: ").append(toIndentedString(step)).append("\n");
     sb.append("}");
     return sb.toString();
   }

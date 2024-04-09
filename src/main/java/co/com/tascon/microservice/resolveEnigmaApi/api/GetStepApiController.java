@@ -1,5 +1,6 @@
 package co.com.tascon.microservice.resolveEnigmaApi.api;
 
+import co.com.tascon.microservice.resolveEnigmaApi.model.ErrorDetail;
 import co.com.tascon.microservice.resolveEnigmaApi.model.GetEnigmaRequest;
 import co.com.tascon.microservice.resolveEnigmaApi.model.GetEnigmaStepResponse;
 import co.com.tascon.microservice.resolveEnigmaApi.model.Header;
@@ -24,6 +25,7 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-03-05T20:26:42.246712-05:00[America/Bogota]")
@@ -36,31 +38,51 @@ public class GetStepApiController implements GetStepApi {
 	}
 	
 	
-    public ResponseEntity<JsonApiBodyResponseSuccess> getStep(@ApiParam(value = "request body get enigma Step", required = true) @Valid @RequestBody JsonApiBodyRequest body) {
+	public ResponseEntity<?> getStep(@ApiParam(value = "request body get enigma step", required = true) @Valid @RequestBody JsonApiBodyRequest body) {
+        boolean isStepOne = (body.getData().get(0).getStep().equalsIgnoreCase("2"));
     	
-    	
-    	GetEnigmaRequest enigmaRequest = body.getData().get(0);
-        Header header = enigmaRequest.getHeader();
-        String id = header.getId();
-        String type = header.getType();
-        String enigma = enigmaRequest.getEnigma();
-
-        String solution = answerEnigma(enigma);
-
-        GetEnigmaStepResponse response = new GetEnigmaStepResponse();
-        response.setId(id);
-        response.setType(type);
-        response.setSolution(solution);
-
-        JsonApiBodyResponseSuccess responseBody = new JsonApiBodyResponseSuccess();
-        responseBody.addDataItem(response);
-
-        return new ResponseEntity<>(responseBody, HttpStatus.OK);
-    	
+    	if (!isStepOne) {        	
+        	return new ResponseEntity<>(responseError(body), HttpStatus.BAD_REQUEST);
+        }
+        
+        return new ResponseEntity<>(responseSuccess(body), HttpStatus.OK);
     }
-
-    private String answerEnigma(String enigmaQuestion) {
-        return "Step2: Put the giraffe in";
+    
+    public ResponseEntity<String> getStepOne() {
+    	return new ResponseEntity<>("Step2: Put the giraffe in", HttpStatus.OK);
+    }
+    
+    private List<JsonApiBodyResponseErrors> responseError(JsonApiBodyRequest body) {
+    	ErrorDetail errorDetail = new ErrorDetail();
+    	errorDetail.setCode("001");
+    	errorDetail.setDetail("Step: ".concat(body.getData().get(0).getStep()).concat(" not supported - Expected: 2"));
+    	errorDetail.setId(body.getData().get(0).getHeader().getId());
+    	errorDetail.setSource("/getStep");
+    	errorDetail.setStatus("400");
+    	errorDetail.setTitle("Step not supported");
+    	
+    	JsonApiBodyResponseErrors responseError = new JsonApiBodyResponseErrors();
+    	responseError.addErrorsItem(errorDetail);
+    	
+    	List<JsonApiBodyResponseErrors> responseErrorsList = new ArrayList<JsonApiBodyResponseErrors>(); 
+    	responseErrorsList.add(responseError);
+    	
+    	return responseErrorsList;
+    }
+    
+    private List<JsonApiBodyResponseSuccess> responseSuccess(JsonApiBodyRequest body) {
+        GetEnigmaStepResponse responseEnigma = new GetEnigmaStepResponse();    
+        responseEnigma.setHeader(body.getData().get(0).getHeader());
+        responseEnigma.setStep(body.getData().get(0).getStep());
+        responseEnigma.setStepDescription("Put the giraffe in");
+        
+        JsonApiBodyResponseSuccess responseSuccess = new JsonApiBodyResponseSuccess();
+        responseSuccess.addDataItem(responseEnigma);
+        
+        List<JsonApiBodyResponseSuccess> responseSuccessList = new ArrayList<JsonApiBodyResponseSuccess>();  
+        responseSuccessList.add(responseSuccess);
+        
+        return responseSuccessList;
     }
 
 
